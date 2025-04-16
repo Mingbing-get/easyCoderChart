@@ -1,0 +1,21 @@
+{
+  "name": "faas",
+  "version": "1.0.0",
+  "description": "页面函数",
+  "main": "index.js",
+  "scripts": {
+    "build": "node ./scripts/build.js",
+    "dev": "node ./scripts/build.js -w"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5",
+    "vite": "^4.3.8"
+  },
+  "dependencies": {
+    "@easy-coder/sdk": "^0.2.0"
+  }
+}

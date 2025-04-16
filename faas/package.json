@@ -1,0 +1,16 @@
+{
+  "name": "faas",
+  "version": "1.0.0",
+  "description": "云函数",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && node ./scripts/build.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5"
+  }
+}

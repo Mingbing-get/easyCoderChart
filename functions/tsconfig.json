@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": false,
+    "strict": true,
+    "outDir": "../.ecc/faas",
+    "rootDir": "src",
+    "skipLibCheck": true
+  },
+  "include": ["src", "./ecc.d.ts", "../ecc/types"]
+}
