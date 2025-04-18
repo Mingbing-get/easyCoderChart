@@ -1,7 +1,7 @@
 import { DataCenter, WithEnumsGroup } from '@easy-coder/sdk/data'
 import { getVariableValueByPath, getVariableByPath, VariableDefine, variableFromModalField } from '@easy-coder/sdk/variable'
 
-import { VariableData } from '../aSetter/chartDataSourceSetter/type'
+import { ValueFieldWithLabel, VariableData } from '../aSetter/chartDataSourceSetter/type'
 import { ConditionOptions, formatDate } from './modalData'
 import { i18n } from '@easy-coder/sdk/i18n'
 
@@ -89,8 +89,12 @@ async function getObjectFieldDefineInArray(datacenter: DataCenter, arrDefine: Va
   }
 }
 
-export function checkVariableDataIsComplete(variableData: VariableData) {
+export function checkVariableDataIsComplete(variableData: VariableData, valueFields: ValueFieldWithLabel[]) {
   if (!variableData.path?.length || !variableData.labelField || !variableData.valueField) return false
+
+  for (const item of valueFields) {
+    if (!variableData.valueField[item.name]) return false
+  }
 
   return true
 }

@@ -3,17 +3,18 @@ import { LongText } from '@easy-coder/sdk/helper'
 import { i18n } from '@easy-coder/sdk/i18n'
 import { Select, Input } from '@arco-design/web-react'
 
-import { InputData } from './type'
+import { InputData, ValueFieldWithLabel } from './type'
 import local from './local'
 import { parseData } from '../../aUtils/inputData'
 
 interface Props {
   value?: Omit<InputData, 'from'>
   disabled?: boolean
+  valueFields: ValueFieldWithLabel[]
   onChange?: (value?: Omit<InputData, 'from'>) => void
 }
 
-export default function InputOfChart({ value, disabled, onChange }: Props) {
+export default function InputOfChart({ value, disabled, valueFields, onChange }: Props) {
   const totalColumns = useMemo(() => {
     const data = parseData(value?.data)
     if (!data.length) return 0
@@ -45,20 +46,24 @@ export default function InputOfChart({ value, disabled, onChange }: Props) {
           onChange={(v) => onChange?.({ ...value, data: v, valueField: undefined, labelField: undefined })}
         />
       </div>
-      <div className="chart-data-source-setter-row">
-        <LongText
-          className="chart-data-source-setter-label"
-          text={local.yAxis}
-        />
-        <Select
-          getPopupContainer={() => document.body}
-          options={columnOptions}
-          size="mini"
-          disabled={disabled}
-          value={value?.valueField}
-          onChange={(v) => onChange?.({ ...value, valueField: v })}
-        />
-      </div>
+      {valueFields.map((field) => (
+        <div
+          key={field.name}
+          className="chart-data-source-setter-row">
+          <LongText
+            className="chart-data-source-setter-label"
+            text={i18n.translate(field.label)}
+          />
+          <Select
+            getPopupContainer={() => document.body}
+            options={columnOptions}
+            size="mini"
+            disabled={disabled}
+            value={value?.valueField?.[field.name]}
+            onChange={(v) => onChange?.({ ...value, valueField: { ...value.valueField, [field.name]: v } })}
+          />
+        </div>
+      ))}
       <div className="chart-data-source-setter-row">
         <LongText
           className="chart-data-source-setter-label"

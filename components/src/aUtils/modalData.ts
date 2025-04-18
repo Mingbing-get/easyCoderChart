@@ -2,7 +2,7 @@ import { CRUD, DataCenter, ModalField, WithEnumsGroup } from '@easy-coder/sdk/da
 import { i18n } from '@easy-coder/sdk/i18n'
 import { checkConditionIsComplete, variableConditionToModalCondition, VariableDefine } from '@easy-coder/sdk/variable'
 
-import { ModalData, DataSource } from '../aSetter/chartDataSourceSetter/type'
+import { ModalData, DataSource, ValueFieldWithLabel } from '../aSetter/chartDataSourceSetter/type'
 
 export interface ConditionOptions {
   context?: Record<string, any>
@@ -10,8 +10,14 @@ export interface ConditionOptions {
   onVariablePath?: (path: string[]) => void
 }
 
-export async function fetchDataByModalData(dataCenter: DataCenter, modalData: ModalData, conditionOptions?: ConditionOptions, useExample?: boolean) {
-  if (!checkModalDataIsComplete(modalData)) {
+export async function fetchDataByModalData(
+  dataCenter: DataCenter,
+  modalData: ModalData,
+  valueFields: ValueFieldWithLabel[],
+  conditionOptions?: ConditionOptions,
+  useExample?: boolean
+) {
+  if (!checkModalDataIsComplete(modalData, valueFields)) {
     return {
       code: -1,
       msg: '未完整配置',
@@ -63,7 +69,7 @@ export async function fetchDataByModalData(dataCenter: DataCenter, modalData: Mo
   if (!modalData.method || modalData.method === 'find') {
     const records = await dataCenter.crud(modalData.modalConfig.name, 'find', {
       orders: modalData.modalConfig.orders,
-      fields: [modalData.valueField, modalData.labelField],
+      fields: [...Object.values(modalData.valueField), modalData.labelField],
       limit: modalData.limit,
       offset: modalData.offset,
       condition,
@@ -92,7 +98,7 @@ export async function fetchDataByModalData(dataCenter: DataCenter, modalData: Mo
     orders: modalData.modalConfig.orders,
     limit: modalData.limit,
     offset: modalData.offset,
-    aggField: modalData.valueField,
+    aggField: Object.values(modalData.valueField)[0],
     groupByFields: [modalData.labelField],
     condition,
     useApiId: true,
@@ -108,8 +114,12 @@ export async function fetchDataByModalData(dataCenter: DataCenter, modalData: Mo
   }
 }
 
-export function checkModalDataIsComplete(modalData: ModalData) {
+export function checkModalDataIsComplete(modalData: ModalData, valueFields: ValueFieldWithLabel[]) {
   if (!modalData.modalConfig?.name || !modalData.labelField || !modalData.valueField) return false
+
+  for (const item of valueFields) {
+    if (!modalData.valueField[item.name]) return false
+  }
 
   if (modalData.modalConfig.condition) {
     if (!checkConditionIsComplete(modalData.modalConfig.condition)) return false
@@ -141,10 +151,17 @@ export async function createExampleCharts(dataCenter: DataCenter, modalData: Mod
     labelValues.push(...new Array(5).fill(1).map((_, index) => i18n.translate({ zh: `示例_${index + 1}`, en: `Example_${index + 1}` })))
   }
 
-  return labelValues.map((v) => ({
-    [modalData.labelField]: v,
-    [modalData.valueField]: Math.floor(Math.random() * 100),
-  }))
+  return labelValues.map((v) => {
+    const record: Record<string, any> = {
+      [modalData.labelField]: v,
+    }
+
+    for (const key in modalData.valueField) {
+      record[modalData.valueField[key]] = Math.floor(Math.random() * 100)
+    }
+
+    return record
+  })
 }
 
 export function isModalData(v: DataSource): v is ModalData {

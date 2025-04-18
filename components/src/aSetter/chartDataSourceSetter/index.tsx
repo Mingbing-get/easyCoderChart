@@ -5,17 +5,18 @@ import DataModalOfChart from './dataModalOfChart'
 import VariableOfChart from './variableOfChart'
 import InputOfChart from './inputOfChart'
 import local from './local'
-import { DataSource } from './type'
+import { DataSource, ValueFieldWithLabel } from './type'
 
 import './index.scss'
 
 interface Props {
   value?: DataSource
   disabled?: boolean
+  valueFields: ValueFieldWithLabel[]
   onChange?: (value?: DataSource) => void
 }
 
-export default function ChartDataSourceSetter({ value, disabled, onChange }: Props) {
+export default function ChartDataSourceSetter({ value, disabled, valueFields, onChange }: Props) {
   return (
     <div className="chart-data-source-setter">
       <div className="chart-data-source-setter-row">
@@ -38,6 +39,7 @@ export default function ChartDataSourceSetter({ value, disabled, onChange }: Pro
         <DataModalOfChart
           value={value}
           disabled={disabled}
+          valueFields={valueFields}
           onChange={onChange}
         />
       )}
@@ -45,6 +47,7 @@ export default function ChartDataSourceSetter({ value, disabled, onChange }: Pro
         <VariableOfChart
           value={value}
           disabled={disabled}
+          valueFields={valueFields}
           onChange={onChange}
         />
       )}
@@ -52,6 +55,7 @@ export default function ChartDataSourceSetter({ value, disabled, onChange }: Pro
         <InputOfChart
           value={value}
           disabled={disabled}
+          valueFields={valueFields}
           onChange={onChange}
         />
       )}

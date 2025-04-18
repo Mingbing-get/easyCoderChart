@@ -1,10 +1,21 @@
 import { ObjectPanelOrLabelRenderProps, GroupDecorator, LineDecorator } from '@easy-coder/sdk/design'
 import { i18n } from '@easy-coder/sdk/i18n'
+import { LongText } from '@easy-coder/sdk/helper'
 
 import ChartDataSourceSetter from '../chartDataSourceSetter'
 import ChartTypePicker from './chartTypePicker'
+import { ValueFieldWithLabel } from '../chartDataSourceSetter/type'
 import { DataSourceWithChart } from './type'
-import { LongText } from '@easy-coder/sdk/helper'
+
+export const commValueFields: ValueFieldWithLabel[] = [
+  {
+    name: 'value',
+    label: {
+      zh: '值',
+      en: 'Value',
+    },
+  },
+]
 
 export default function CommonPanelSetter({ item, disabled, onChange }: ObjectPanelOrLabelRenderProps<DataSourceWithChart>) {
   return (
@@ -14,6 +25,7 @@ export default function CommonPanelSetter({ item, disabled, onChange }: ObjectPa
         canFold>
         <ChartDataSourceSetter
           value={item}
+          valueFields={commValueFields}
           disabled={disabled}
           onChange={onChange}
         />

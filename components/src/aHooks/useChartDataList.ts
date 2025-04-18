@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDataCenter } from '@easy-coder/sdk/data'
 import { useVariableDefine, useVariableValue, useEnv } from '@easy-coder/sdk/store'
 
-import { DataSource } from '../aSetter/chartDataSourceSetter/type'
+import { DataSource, ValueFieldWithLabel } from '../aSetter/chartDataSourceSetter/type'
 import { fetchDataByModalData, ConditionOptions, isModalData } from '../aUtils/modalData'
 import { parseData, checkInputDataIsComplete } from '../aUtils/inputData'
 import { getVariableValue, checkVariableDataIsComplete } from '../aUtils/variableData'
@@ -12,13 +12,13 @@ interface SpecData {
   values: Record<string, any>[]
 }
 
-export default function useChartDataList(dataList: DataSource[]) {
+export default function useChartDataList(dataList: DataSource[], valueFields: ValueFieldWithLabel[]) {
   const datacenter = useDataCenter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<{ isError: boolean; msg?: string }>({
     isError: false,
   })
-  const [specDataList, setSpecDataList] = useState<SpecData[]>(createEmptySpec(dataList.length))
+  const [specDataList, setSpecDataList] = useState<SpecData[]>(createEmptySpec(dataList?.length || 0))
   const { variableDefine, initComplete } = useVariableDefine()
   const { variableValue, addDependent } = useVariableValue()
   const { isPreviewing } = useEnv()
@@ -30,11 +30,11 @@ export default function useChartDataList(dataList: DataSource[]) {
     const resList = await Promise.all(
       dataList.map((item) => {
         if (isModalData(item)) {
-          return fetchDataByModalData(datacenter, item, conditionOptions, isPreviewing)
+          return fetchDataByModalData(datacenter, item, valueFields, conditionOptions, isPreviewing)
         }
 
         if (item.from === 'input') {
-          if (!checkInputDataIsComplete(item))
+          if (!checkInputDataIsComplete(item, valueFields))
             return {
               code: -1,
               msg: '未配置完整',
@@ -48,7 +48,7 @@ export default function useChartDataList(dataList: DataSource[]) {
         }
 
         if (item.from === 'variable') {
-          if (!checkVariableDataIsComplete(item)) {
+          if (!checkVariableDataIsComplete(item, valueFields)) {
             return {
               code: -1,
               msg: '未配置完整',
@@ -72,7 +72,7 @@ export default function useChartDataList(dataList: DataSource[]) {
         isError: true,
         msg: hasError.msg,
       })
-      setSpecDataList(createEmptySpec(dataList.length))
+      setSpecDataList(createEmptySpec(dataList?.length || 0))
     } else {
       setError({
         isError: false,

@@ -8,7 +8,7 @@ export interface ModalData {
   limit?: number
   offset?: number
   labelField?: string
-  valueField?: string
+  valueField?: Record<string, string>
   label?: Multilingual
 }
 
@@ -16,7 +16,7 @@ export interface InputData {
   from: 'input'
   data?: string
   labelField?: string
-  valueField?: string
+  valueField?: Record<string, string>
   label?: Multilingual
 }
 
@@ -24,8 +24,13 @@ export interface VariableData {
   from: 'variable'
   path?: string[]
   labelField?: string
-  valueField?: string
+  valueField?: Record<string, string>
   label?: Multilingual
 }
 
 export type DataSource = ModalData | InputData | VariableData
+
+export interface ValueFieldWithLabel {
+  name: string
+  label: Multilingual
+}

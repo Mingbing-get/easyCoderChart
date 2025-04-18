@@ -7,11 +7,12 @@ import { useVariableDefine } from '@easy-coder/sdk/store'
 import { Select } from '@arco-design/web-react'
 
 import local from './local'
-import { VariableData } from './type'
+import { VariableData, ValueFieldWithLabel } from './type'
 
 interface Props {
   value?: Omit<VariableData, 'from'>
   disabled?: boolean
+  valueFields: ValueFieldWithLabel[]
   onChange?: (value?: Omit<VariableData, 'from'>) => void
 }
 
@@ -20,7 +21,7 @@ interface Option {
   label: string
 }
 
-export default function VariableOfChart({ value, disabled, onChange }: Props) {
+export default function VariableOfChart({ value, disabled, valueFields, onChange }: Props) {
   const dataCenter = useDataCenter()
   const { variableDefine, initComplete } = useVariableDefine()
   const variableDefineRef = useRef(variableDefine)
@@ -38,7 +39,7 @@ export default function VariableOfChart({ value, disabled, onChange }: Props) {
       return
     }
 
-    const currentPickVariable = await getVariableByPath(dataCenter, value.path, variableDefineRef.current)
+    const currentPickVariable = await getVariableByPath(dataCenter, path, variableDefineRef.current)
     const proVariables: Record<string, VariableDefine.Desc> = {}
     if (currentPickVariable.type === 'multipleLookup') {
       const modalList = await dataCenter.modalList()
@@ -106,20 +107,24 @@ export default function VariableOfChart({ value, disabled, onChange }: Props) {
           onSelect={(path) => onChange?.({ ...value, path, valueField: undefined, labelField: undefined })}
         />
       </div>
-      <div className="chart-data-source-setter-row">
-        <LongText
-          className="chart-data-source-setter-label"
-          text={local.yAxis}
-        />
-        <Select
-          getPopupContainer={() => document.body}
-          options={valueOptions}
-          size="mini"
-          disabled={disabled}
-          value={value?.valueField}
-          onChange={(v) => onChange?.({ ...value, valueField: v })}
-        />
-      </div>
+      {valueFields.map((field) => (
+        <div
+          key={field.name}
+          className="chart-data-source-setter-row">
+          <LongText
+            className="chart-data-source-setter-label"
+            text={i18n.translate(field.label)}
+          />
+          <Select
+            getPopupContainer={() => document.body}
+            options={valueOptions}
+            size="mini"
+            disabled={disabled}
+            value={value?.valueField?.[field.name]}
+            onChange={(v) => onChange?.({ ...value, valueField: { ...value.valueField, [field.name]: v } })}
+          />
+        </div>
+      ))}
       <div className="chart-data-source-setter-row">
         <LongText
           className="chart-data-source-setter-label"

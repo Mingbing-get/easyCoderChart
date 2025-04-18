@@ -7,6 +7,7 @@ import { Spin } from '@arco-design/web-react'
 
 import { DataSourceWithChart } from '../aSetter/commonPanelSetter/type'
 import useChartDataList from '../aHooks/useChartDataList'
+import { commValueFields } from '../aSetter/commonPanelSetter'
 
 export interface CommonChartProps extends EasyCoderElement.DataProps {
   title?: Multilingual
@@ -17,10 +18,10 @@ export interface CommonChartProps extends EasyCoderElement.DataProps {
 export default function CommonChart({ style, title, dataList, ...extra }: CommonChartProps) {
   const domRef = useRef<HTMLDivElement>(null)
 
-  const { specDataList, error, loading } = useChartDataList(dataList)
+  const { specDataList, error, loading } = useChartDataList(dataList, commValueFields)
 
   useEffect(() => {
-    if (!domRef.current || error.isError || loading) return
+    if (!domRef.current || error.isError || loading || !specDataList.length) return
 
     const spec: ICommonChartSpec = {
       type: 'common',
@@ -50,9 +51,9 @@ export default function CommonChart({ style, title, dataList, ...extra }: Common
       ref={domRef}
       style={style}
       {...extra}>
-      {error.isError && (
+      {(error.isError || !dataList?.length) && (
         <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span>{error.msg}</span>
+          <span>{error?.msg || '配置错误'}</span>
         </div>
       )}
       {loading && (
@@ -77,7 +78,7 @@ function dataSourceToSeries(datasource: DataSourceWithChart, index: number): Arr
       dataIndex: index,
       label: { visible: true },
       xField: datasource.labelField,
-      yField: datasource.valueField,
+      yField: datasource.valueField?.[commValueFields[0].name],
     }
   }
 
@@ -88,7 +89,7 @@ function dataSourceToSeries(datasource: DataSourceWithChart, index: number): Arr
       dataIndex: index,
       label: { visible: true },
       xField: datasource.labelField,
-      yField: datasource.valueField,
+      yField: datasource.valueField?.[commValueFields[0].name],
     }
   }
 
@@ -98,7 +99,7 @@ function dataSourceToSeries(datasource: DataSourceWithChart, index: number): Arr
       type: 'area',
       dataIndex: index,
       xField: datasource.labelField,
-      yField: datasource.valueField,
+      yField: datasource.valueField?.[commValueFields[0].name],
     }
   }
 
@@ -109,7 +110,7 @@ function dataSourceToSeries(datasource: DataSourceWithChart, index: number): Arr
       dataIndex: index,
       label: { visible: true },
       xField: datasource.labelField,
-      yField: datasource.valueField,
+      yField: datasource.valueField?.[commValueFields[0].name],
     }
   }
 }

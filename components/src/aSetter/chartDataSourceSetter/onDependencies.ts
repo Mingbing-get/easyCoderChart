@@ -34,10 +34,12 @@ const onChartDataSourceDependencies: EasyCoderElement.UiConfig<any, DataSource>[
       }
 
       if (attrValue.valueField) {
-        deps.push({
-          refType: 'modalField',
-          refPath: [modalName, attrValue.valueField],
-        })
+        for (const key in attrValue.valueField) {
+          deps.push({
+            refType: 'modalField',
+            refPath: [modalName, attrValue.valueField[key]],
+          })
+        }
       }
 
       if (attrValue.modalConfig.condition) {

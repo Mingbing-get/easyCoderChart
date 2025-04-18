@@ -5,12 +5,13 @@ import { i18n } from '@easy-coder/sdk/i18n'
 import { useDataCenter, Modal } from '@easy-coder/sdk/data'
 import { Select, InputNumber } from '@arco-design/web-react'
 
-import { ModalData } from './type'
+import { ModalData, ValueFieldWithLabel } from './type'
 import local from './local'
 
 interface Props {
   value?: Omit<ModalData, 'from'>
   disabled?: boolean
+  valueFields: ValueFieldWithLabel[]
   onChange?: (value?: Omit<ModalData, 'from'>) => void
 }
 
@@ -41,7 +42,7 @@ const methodOptions = [
   },
 ]
 
-export default function DataModalOfChart({ value, disabled, onChange }: Props) {
+export default function DataModalOfChart({ value, disabled, valueFields, onChange }: Props) {
   const [modal, setModal] = useState<Modal>()
 
   const datacenter = useDataCenter()
@@ -99,6 +100,12 @@ export default function DataModalOfChart({ value, disabled, onChange }: Props) {
       .map((item) => ({ value: item.name, label: i18n.translate(item.label) }))
   }, [modal, value?.method])
 
+  const afterFilterMethodOptions = useMemo(() => {
+    if (valueFields.length === 1) return methodOptions
+
+    return methodOptions.filter((option) => option.value === 'find')
+  }, [valueFields])
+
   return (
     <>
       <ModalMetaSetter
@@ -115,27 +122,31 @@ export default function DataModalOfChart({ value, disabled, onChange }: Props) {
         />
         <Select
           getPopupContainer={() => document.body}
-          options={methodOptions}
+          options={afterFilterMethodOptions}
           size="mini"
           disabled={disabled}
           value={value?.method || 'find'}
           onChange={(v) => onChange?.({ ...value, method: v })}
         />
       </div>
-      <div className="chart-data-source-setter-row">
-        <LongText
-          className="chart-data-source-setter-label"
-          text={local.yAxis}
-        />
-        <Select
-          getPopupContainer={() => document.body}
-          options={valueOptions}
-          size="mini"
-          disabled={disabled}
-          value={value?.valueField}
-          onChange={(v) => onChange?.({ ...value, valueField: v })}
-        />
-      </div>
+      {valueFields.map((field) => (
+        <div
+          key={field.name}
+          className="chart-data-source-setter-row">
+          <LongText
+            className="chart-data-source-setter-label"
+            text={i18n.translate(field.label)}
+          />
+          <Select
+            getPopupContainer={() => document.body}
+            options={valueOptions}
+            size="mini"
+            disabled={disabled}
+            value={value?.valueField?.[field.name]}
+            onChange={(v) => onChange?.({ ...value, valueField: { ...value.valueField, [field.name]: v } })}
+          />
+        </div>
+      ))}
       <div className="chart-data-source-setter-row">
         <LongText
           className="chart-data-source-setter-label"

@@ -1,4 +1,4 @@
-import { InputData } from '../aSetter/chartDataSourceSetter/type'
+import { InputData, ValueFieldWithLabel } from '../aSetter/chartDataSourceSetter/type'
 
 export function parseData(data?: string): Record<string, number | string>[] {
   if (!data) return []
@@ -24,8 +24,12 @@ export function parseData(data?: string): Record<string, number | string>[] {
   return res
 }
 
-export function checkInputDataIsComplete(inputData: InputData) {
+export function checkInputDataIsComplete(inputData: InputData, valueFields: ValueFieldWithLabel[]) {
   if (!inputData.data || !inputData.labelField || !inputData.valueField) return false
+
+  for (const item of valueFields) {
+    if (!inputData.valueField[item.name]) return false
+  }
 
   return true
 }
