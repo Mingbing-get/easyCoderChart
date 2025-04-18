@@ -18,8 +18,10 @@
     "vite": "^4.3.8"
   },
   "dependencies": {
+    "@arco-design/web-react": "^2.63.1",
+    "@easy-coder/sdk": "^0.2.0",
+    "@visactor/vchart": "^1.13.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "@easy-coder/sdk": "^0.2.0"
+    "react-dom": "^18.2.0"
   }
 }
