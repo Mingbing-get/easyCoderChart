@@ -150,7 +150,7 @@ export default function DataModalOfChart({ value, disabled, valueFields, onChang
       <div className="chart-data-source-setter-row">
         <LongText
           className="chart-data-source-setter-label"
-          text={local.xAxis}
+          text={local.labelField}
         />
         <Select
           getPopupContainer={() => document.body}

@@ -128,7 +128,7 @@ export default function VariableOfChart({ value, disabled, valueFields, onChange
       <div className="chart-data-source-setter-row">
         <LongText
           className="chart-data-source-setter-label"
-          text={local.xAxis}
+          text={local.labelField}
         />
         <Select
           getPopupContainer={() => document.body}

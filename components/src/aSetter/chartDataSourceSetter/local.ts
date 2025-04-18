@@ -29,13 +29,9 @@ const local = {
     zh: '获取条数',
     en: 'Get count',
   }),
-  yAxis: i18n.translate({
-    zh: 'y轴',
-    en: 'Y axis',
-  }),
-  xAxis: i18n.translate({
-    zh: 'x轴',
-    en: 'X axis',
+  labelField: i18n.translate({
+    zh: '标签字段',
+    en: 'Label field',
   }),
   data: i18n.translate({
     zh: '数据',
