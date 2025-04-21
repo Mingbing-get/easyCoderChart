@@ -41,6 +41,7 @@ export default function InputOfChart({ value, disabled, valueFields, hiddenLabel
           text={local.data}
         />
         <Input.TextArea
+          placeholder="请输入数据，以【空格、制表符、英文逗号】分割每一列；以换行符分割每一行；例如：张三 10 80"
           disabled={disabled}
           value={value?.data}
           rows={8}
