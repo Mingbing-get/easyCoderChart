@@ -12,6 +12,7 @@ interface Props {
   value?: Omit<ModalData, 'from'>
   disabled?: boolean
   valueFields: ValueFieldWithLabel[]
+  hiddenLabelField?: boolean
   onChange?: (value?: Omit<ModalData, 'from'>) => void
 }
 
@@ -42,7 +43,7 @@ const methodOptions = [
   },
 ]
 
-export default function DataModalOfChart({ value, disabled, valueFields, onChange }: Props) {
+export default function DataModalOfChart({ value, disabled, valueFields, hiddenLabelField, onChange }: Props) {
   const [modal, setModal] = useState<Modal>()
 
   const datacenter = useDataCenter()
@@ -101,10 +102,10 @@ export default function DataModalOfChart({ value, disabled, valueFields, onChang
   }, [modal, value?.method])
 
   const afterFilterMethodOptions = useMemo(() => {
-    if (valueFields.length === 1) return methodOptions
+    if (valueFields.length === 1 && !hiddenLabelField) return methodOptions
 
     return methodOptions.filter((option) => option.value === 'find')
-  }, [valueFields])
+  }, [valueFields, hiddenLabelField])
 
   return (
     <>
@@ -147,20 +148,22 @@ export default function DataModalOfChart({ value, disabled, valueFields, onChang
           />
         </div>
       ))}
-      <div className="chart-data-source-setter-row">
-        <LongText
-          className="chart-data-source-setter-label"
-          text={local.labelField}
-        />
-        <Select
-          getPopupContainer={() => document.body}
-          options={labelOptions}
-          size="mini"
-          disabled={disabled}
-          value={value?.labelField}
-          onChange={(v) => onChange?.({ ...value, labelField: v })}
-        />
-      </div>
+      {!hiddenLabelField && (
+        <div className="chart-data-source-setter-row">
+          <LongText
+            className="chart-data-source-setter-label"
+            text={local.labelField}
+          />
+          <Select
+            getPopupContainer={() => document.body}
+            options={labelOptions}
+            size="mini"
+            disabled={disabled}
+            value={value?.labelField}
+            onChange={(v) => onChange?.({ ...value, labelField: v })}
+          />
+        </div>
+      )}
       <div className="chart-data-source-setter-row">
         <LongText
           className="chart-data-source-setter-label"

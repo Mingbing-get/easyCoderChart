@@ -1,0 +1,20 @@
+<svg
+  viewBox="0 0 1024 1024"
+  version="1.1"
+  xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M960 896v64H96l-32-32V64h64v832z"
+    opacity=".75"></path>
+  <path
+    d="M480 224h128v512h-128z"
+    opacity=".1"></path>
+  <path d="M448 224v512l32 32h128l32-32v-512L608 192h-128zM576 256v448H512V256z"></path>
+  <path
+    d="M224 352h128v320h-128z"
+    opacity=".1"></path>
+  <path d="M192 352v320l32 32h128l32-32v-320L352 320h-128zM320 384v256H256V384z"></path>
+  <path
+    d="M736 160h128v448h-128z"
+    opacity=".1"></path>
+  <path d="M704 160v448l32 32h128l32-32v-448l-32-32h-128z m128 32v384h-64V192z"></path>
+</svg>

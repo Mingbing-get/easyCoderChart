@@ -13,10 +13,11 @@ interface Props {
   value?: DataSource
   disabled?: boolean
   valueFields: ValueFieldWithLabel[]
+  hiddenLabelField?: boolean
   onChange?: (value?: DataSource) => void
 }
 
-export default function ChartDataSourceSetter({ value, disabled, valueFields, onChange }: Props) {
+export default function ChartDataSourceSetter({ value, disabled, valueFields, hiddenLabelField, onChange }: Props) {
   return (
     <div className="chart-data-source-setter">
       <div className="chart-data-source-setter-row">
@@ -29,7 +30,7 @@ export default function ChartDataSourceSetter({ value, disabled, valueFields, on
           size="mini"
           disabled={disabled}
           value={value?.from || 'modal'}
-          onChange={(v) => onChange?.({ ...value, from: v })}>
+          onChange={(v) => onChange?.({ from: v, label: value?.label })}>
           <Radio value="modal">{local.dataModal}</Radio>
           <Radio value="variable">{local.variable}</Radio>
           <Radio value="input">{local.input}</Radio>
@@ -40,6 +41,7 @@ export default function ChartDataSourceSetter({ value, disabled, valueFields, on
           value={value}
           disabled={disabled}
           valueFields={valueFields}
+          hiddenLabelField={hiddenLabelField}
           onChange={onChange}
         />
       )}
@@ -48,6 +50,7 @@ export default function ChartDataSourceSetter({ value, disabled, valueFields, on
           value={value}
           disabled={disabled}
           valueFields={valueFields}
+          hiddenLabelField={hiddenLabelField}
           onChange={onChange}
         />
       )}
@@ -56,6 +59,7 @@ export default function ChartDataSourceSetter({ value, disabled, valueFields, on
           value={value}
           disabled={disabled}
           valueFields={valueFields}
+          hiddenLabelField={hiddenLabelField}
           onChange={onChange}
         />
       )}

@@ -24,8 +24,10 @@ export function parseData(data?: string): Record<string, number | string>[] {
   return res
 }
 
-export function checkInputDataIsComplete(inputData: InputData, valueFields: ValueFieldWithLabel[]) {
-  if (!inputData.data || !inputData.labelField || !inputData.valueField) return false
+export function checkInputDataIsComplete(inputData: InputData, valueFields: ValueFieldWithLabel[], hiddenLabelField?: boolean) {
+  if (!inputData.data || !inputData.valueField) return false
+
+  if (!hiddenLabelField && !inputData.labelField) return false
 
   for (const item of valueFields) {
     if (!inputData.valueField[item.name]) return false

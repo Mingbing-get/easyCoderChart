@@ -12,7 +12,7 @@ interface SpecData {
   values: Record<string, any>[]
 }
 
-export default function useChartDataList(dataList: DataSource[], valueFields: ValueFieldWithLabel[]) {
+export default function useChartDataList(dataList: DataSource[], valueFields: ValueFieldWithLabel[], hiddenLabelField?: boolean) {
   const datacenter = useDataCenter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<{ isError: boolean; msg?: string }>({
@@ -30,11 +30,11 @@ export default function useChartDataList(dataList: DataSource[], valueFields: Va
     const resList = await Promise.all(
       dataList.map((item) => {
         if (isModalData(item)) {
-          return fetchDataByModalData(datacenter, item, valueFields, conditionOptions, isPreviewing)
+          return fetchDataByModalData(datacenter, item, valueFields, conditionOptions, isPreviewing, hiddenLabelField)
         }
 
         if (item.from === 'input') {
-          if (!checkInputDataIsComplete(item, valueFields))
+          if (!checkInputDataIsComplete(item, valueFields, hiddenLabelField))
             return {
               code: -1,
               msg: '未配置完整',
@@ -48,7 +48,7 @@ export default function useChartDataList(dataList: DataSource[], valueFields: Va
         }
 
         if (item.from === 'variable') {
-          if (!checkVariableDataIsComplete(item, valueFields)) {
+          if (!checkVariableDataIsComplete(item, valueFields, hiddenLabelField)) {
             return {
               code: -1,
               msg: '未配置完整',
@@ -56,7 +56,7 @@ export default function useChartDataList(dataList: DataSource[], valueFields: Va
             }
           }
 
-          return getVariableValue(datacenter, item, conditionOptions)
+          return getVariableValue(datacenter, item, conditionOptions, hiddenLabelField)
         }
 
         return {

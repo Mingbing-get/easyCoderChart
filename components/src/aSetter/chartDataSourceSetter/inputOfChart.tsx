@@ -11,10 +11,11 @@ interface Props {
   value?: Omit<InputData, 'from'>
   disabled?: boolean
   valueFields: ValueFieldWithLabel[]
+  hiddenLabelField?: boolean
   onChange?: (value?: Omit<InputData, 'from'>) => void
 }
 
-export default function InputOfChart({ value, disabled, valueFields, onChange }: Props) {
+export default function InputOfChart({ value, disabled, valueFields, hiddenLabelField, onChange }: Props) {
   const totalColumns = useMemo(() => {
     const data = parseData(value?.data)
     if (!data.length) return 0
@@ -64,20 +65,22 @@ export default function InputOfChart({ value, disabled, valueFields, onChange }:
           />
         </div>
       ))}
-      <div className="chart-data-source-setter-row">
-        <LongText
-          className="chart-data-source-setter-label"
-          text={local.labelField}
-        />
-        <Select
-          getPopupContainer={() => document.body}
-          options={columnOptions}
-          size="mini"
-          disabled={disabled}
-          value={value?.labelField}
-          onChange={(v) => onChange?.({ ...value, labelField: v })}
-        />
-      </div>
+      {!hiddenLabelField && (
+        <div className="chart-data-source-setter-row">
+          <LongText
+            className="chart-data-source-setter-label"
+            text={local.labelField}
+          />
+          <Select
+            getPopupContainer={() => document.body}
+            options={columnOptions}
+            size="mini"
+            disabled={disabled}
+            value={value?.labelField}
+            onChange={(v) => onChange?.({ ...value, labelField: v })}
+          />
+        </div>
+      )}
     </>
   )
 }

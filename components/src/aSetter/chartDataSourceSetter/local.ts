@@ -30,8 +30,8 @@ const local = {
     en: 'Get count',
   }),
   labelField: i18n.translate({
-    zh: '标签字段',
-    en: 'Label field',
+    zh: '标签',
+    en: 'Label',
   }),
   data: i18n.translate({
     zh: '数据',

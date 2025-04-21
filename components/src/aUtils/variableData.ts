@@ -5,7 +5,7 @@ import { ValueFieldWithLabel, VariableData } from '../aSetter/chartDataSourceSet
 import { ConditionOptions, formatDate } from './modalData'
 import { i18n } from '@easy-coder/sdk/i18n'
 
-export async function getVariableValue(datacenter: DataCenter, variableData: VariableData, options?: ConditionOptions) {
+export async function getVariableValue(datacenter: DataCenter, variableData: VariableData, options?: ConditionOptions, hiddenLabelField?: boolean) {
   options?.onVariablePath?.(variableData.path)
 
   const variableValue = await getVariableValueByPath(datacenter, variableData.path, options?.contextDefine, options?.context)
@@ -27,17 +27,19 @@ export async function getVariableValue(datacenter: DataCenter, variableData: Var
     return total
   }, [])
 
-  const labelFieldDefine = await getObjectFieldDefineInArray(datacenter, variableDefine, variableData.labelField)
-  let enumGroup: WithEnumsGroup | undefined = undefined
-  if (labelFieldDefine.type === 'enum') {
-    const enumGroups = await datacenter.enumGroupList()
-    enumGroup = enumGroups.find((group) => group.name === labelFieldDefine.enumGroupName)
-  }
+  if (!hiddenLabelField) {
+    const labelFieldDefine = await getObjectFieldDefineInArray(datacenter, variableDefine, variableData.labelField)
+    let enumGroup: WithEnumsGroup | undefined = undefined
+    if (labelFieldDefine.type === 'enum') {
+      const enumGroups = await datacenter.enumGroupList()
+      enumGroup = enumGroups.find((group) => group.name === labelFieldDefine.enumGroupName)
+    }
 
-  if (['datetime', 'enum', 'lookup', 'multilingual'].includes(labelFieldDefine.type)) {
-    records.forEach((record) => {
-      record[variableData.labelField] = transformFieldValue(record[variableData.labelField], labelFieldDefine, enumGroup)
-    })
+    if (['datetime', 'enum', 'lookup', 'multilingual'].includes(labelFieldDefine.type)) {
+      records.forEach((record) => {
+        record[variableData.labelField] = transformFieldValue(record[variableData.labelField], labelFieldDefine, enumGroup)
+      })
+    }
   }
 
   return {
@@ -89,8 +91,10 @@ async function getObjectFieldDefineInArray(datacenter: DataCenter, arrDefine: Va
   }
 }
 
-export function checkVariableDataIsComplete(variableData: VariableData, valueFields: ValueFieldWithLabel[]) {
+export function checkVariableDataIsComplete(variableData: VariableData, valueFields: ValueFieldWithLabel[], hiddenLabelField?: boolean) {
   if (!variableData.path?.length || !variableData.labelField || !variableData.valueField) return false
+
+  if (!hiddenLabelField && !variableData.labelField) return false
 
   for (const item of valueFields) {
     if (!variableData.valueField[item.name]) return false

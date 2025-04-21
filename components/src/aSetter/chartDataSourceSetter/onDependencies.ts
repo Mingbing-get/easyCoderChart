@@ -51,7 +51,7 @@ const onChartDataSourceDependencies: EasyCoderElement.UiConfig<any, DataSource>[
     }
   }
 
-  if (attrValue.from === 'variable') {
+  if (attrValue?.from === 'variable') {
     if (attrValue.path?.length) {
       deps.push({
         refType: 'variable',

@@ -39,6 +39,8 @@ export default function getChartWrapperStyleDefine(label?: Multilingual): EasyCo
         { value: 1, unit: 'px' },
       ],
       borderColor: ['#e5e6eb', '#e5e6eb', '#e5e6eb', '#e5e6eb'],
+      width: { value: 450, unit: 'px' },
+      height: { value: 300, unit: 'px' },
     },
   }
 }

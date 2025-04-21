@@ -38,5 +38,3 @@ export interface Props extends EasyCoderElement.DataProps {
 export default function Container({ children, ...extra }: Props) {
   return <div {...extra}>{children?.()}</div>
 }
-
-// 直方图、区间柱图、箱型图、饼图、玫瑰图、漏斗图、雷达图、词云、仪表盘、进度图

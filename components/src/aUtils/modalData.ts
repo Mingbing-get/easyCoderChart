@@ -15,9 +15,10 @@ export async function fetchDataByModalData(
   modalData: ModalData,
   valueFields: ValueFieldWithLabel[],
   conditionOptions?: ConditionOptions,
-  useExample?: boolean
+  useExample?: boolean,
+  hiddenLabelField?: boolean
 ) {
-  if (!checkModalDataIsComplete(modalData, valueFields)) {
+  if (!checkModalDataIsComplete(modalData, valueFields, hiddenLabelField)) {
     return {
       code: -1,
       msg: '未完整配置',
@@ -28,7 +29,7 @@ export async function fetchDataByModalData(
   if (useExample) {
     return {
       code: 0,
-      records: await createExampleCharts(dataCenter, modalData),
+      records: await createExampleCharts(dataCenter, modalData, hiddenLabelField),
     }
   }
 
@@ -53,7 +54,7 @@ export async function fetchDataByModalData(
   const modalList = await dataCenter.modalList()
   const curModal = modalList.find((modal) => modal.name === modalData.modalConfig.name)
   const labelField = curModal?.fields.find((field) => field.name === modalData.labelField)
-  if (!labelField) {
+  if (!labelField && !hiddenLabelField) {
     return {
       code: -1,
       msg: '未获取到X轴字段',
@@ -61,24 +62,31 @@ export async function fetchDataByModalData(
     }
   }
   let enumGroup: WithEnumsGroup | undefined
-  if (labelField.type === 'enum') {
+  if (labelField?.type === 'enum') {
     const enumGroupList = await dataCenter.enumGroupList()
     enumGroup = enumGroupList.find((group) => group.name === labelField.enumGroupName)
   }
 
   if (!modalData.method || modalData.method === 'find') {
+    const fields = [...Object.values(modalData.valueField)]
+    if (!hiddenLabelField) {
+      fields.push(modalData.labelField)
+    }
+
     const records = await dataCenter.crud(modalData.modalConfig.name, 'find', {
       orders: modalData.modalConfig.orders,
-      fields: [...Object.values(modalData.valueField), modalData.labelField],
+      fields,
       limit: modalData.limit,
       offset: modalData.offset,
       condition,
       useApiId: true,
     })
 
-    records.forEach((record) => {
-      record[labelField.name] = transformFieldValue(record[labelField.name], labelField, enumGroup)
-    })
+    if (!hiddenLabelField) {
+      records.forEach((record) => {
+        record[labelField.name] = transformFieldValue(record[labelField.name], labelField, enumGroup)
+      })
+    }
 
     return {
       code: 0,
@@ -114,8 +122,10 @@ export async function fetchDataByModalData(
   }
 }
 
-export function checkModalDataIsComplete(modalData: ModalData, valueFields: ValueFieldWithLabel[]) {
-  if (!modalData.modalConfig?.name || !modalData.labelField || !modalData.valueField) return false
+export function checkModalDataIsComplete(modalData: ModalData, valueFields: ValueFieldWithLabel[], hiddenLabelField?: boolean) {
+  if (!modalData?.modalConfig?.name || !modalData?.valueField) return false
+
+  if (!hiddenLabelField && !modalData.labelField) return false
 
   for (const item of valueFields) {
     if (!modalData.valueField[item.name]) return false
@@ -128,7 +138,19 @@ export function checkModalDataIsComplete(modalData: ModalData, valueFields: Valu
   return true
 }
 
-export async function createExampleCharts(dataCenter: DataCenter, modalData: ModalData) {
+export async function createExampleCharts(dataCenter: DataCenter, modalData: ModalData, hiddenLabelField?: boolean) {
+  if (hiddenLabelField) {
+    return new Array(5).fill(1).map(() => {
+      const record: Record<string, any> = {}
+
+      for (const key in modalData.valueField) {
+        record[modalData.valueField[key]] = Math.floor(Math.random() * 100)
+      }
+
+      return record
+    })
+  }
+
   const modalList = await dataCenter.modalList()
   const curModal = modalList.find((modal) => modal.name === modalData.modalConfig.name)
   const labelField = curModal?.fields.find((field) => field.name === modalData.labelField)

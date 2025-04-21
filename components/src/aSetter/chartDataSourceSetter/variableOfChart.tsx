@@ -13,6 +13,7 @@ interface Props {
   value?: Omit<VariableData, 'from'>
   disabled?: boolean
   valueFields: ValueFieldWithLabel[]
+  hiddenLabelField?: boolean
   onChange?: (value?: Omit<VariableData, 'from'>) => void
 }
 
@@ -21,7 +22,7 @@ interface Option {
   label: string
 }
 
-export default function VariableOfChart({ value, disabled, valueFields, onChange }: Props) {
+export default function VariableOfChart({ value, disabled, valueFields, hiddenLabelField, onChange }: Props) {
   const dataCenter = useDataCenter()
   const { variableDefine, initComplete } = useVariableDefine()
   const variableDefineRef = useRef(variableDefine)
@@ -125,20 +126,22 @@ export default function VariableOfChart({ value, disabled, valueFields, onChange
           />
         </div>
       ))}
-      <div className="chart-data-source-setter-row">
-        <LongText
-          className="chart-data-source-setter-label"
-          text={local.labelField}
-        />
-        <Select
-          getPopupContainer={() => document.body}
-          options={labelOptions}
-          size="mini"
-          disabled={disabled}
-          value={value?.labelField}
-          onChange={(v) => onChange?.({ ...value, labelField: v })}
-        />
-      </div>
+      {!hiddenLabelField && (
+        <div className="chart-data-source-setter-row">
+          <LongText
+            className="chart-data-source-setter-label"
+            text={local.labelField}
+          />
+          <Select
+            getPopupContainer={() => document.body}
+            options={labelOptions}
+            size="mini"
+            disabled={disabled}
+            value={value?.labelField}
+            onChange={(v) => onChange?.({ ...value, labelField: v })}
+          />
+        </div>
+      )}
     </>
   )
 }
